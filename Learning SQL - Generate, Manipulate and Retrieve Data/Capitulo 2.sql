@@ -1,0 +1,85 @@
+USE sakila;
+
+SELECT NOW() from dual; -- para obtener el día de hoy
+-- LA TABLA dual  CORRESPONDE A UNA TABLA CON DUMMY VARIABLES
+
+SHOW CHARACTER SET;
+-- INDICA LOS TIPOS DE DATOS PARA CARACTERES SOPORTADOS Y EVITAR INCONSISTENCIAS EN LOS DATOS.
+
+-- PROCEDIMIENTO DE CREACION DE TABLA
+-- PASOS 
+
+-- 1- DEFINIR LOS CAMPOS
+-- 2- DEFINIR SI LOS CAMPOS ES MEJOR MANTENERLOS IGUAL O DIVIDIRLOS (EJ: NOMBRES, DIRECCIONES, ETC)
+-- 3- QUE SE DEFINA UN INDICE UNICO QUE PERMITA IDENTIFICAR CADA UNO DE LOS REGISTROS
+
+-- EJEMPLO DE CREACION DE TABLA.
+
+USE sakila;
+CREATE TABLE person(
+	person_id SMALLINT UNSIGNED, -- UNSIGNED EVITA QUE EL VALOR SEA IGUAL A CERO O NEGATIVO
+    fname VARCHAR(20),
+    lname VARCHAR(20),
+	eye_color ENUM('BR','BL','GR'), -- DEFINE QUE EL CAMPO SOLO PUEDE RECIBIR LOS CAMPOS MENCIONADOS DENTRO DE LA FUNCION ENUM
+    birth_date DATE,
+    street VARCHAR(30),
+    city VARCHAR(20),
+    state VARCHAR(20),
+    country VARCHAR(20),
+    postal_code VARCHAR(20),
+    CONSTRAINT pk_person PRIMARY KEY (person_id)
+)
+
+DESC person; -- DESCRIBE UNA TABLA CREADA EN LA BASE DE DATOS
+-- DEFAULT: INDICA SI LA COLUMNA TIENE UN VALOR POR DEFECTO AL NO INGRESAR VALOR ALGUNO EN LA COLUMNA
+-- EXTRA: INDICA ALGUNA OTRA CARACTERISTICA O FUNCION QUE PUEDA SER PERTINENTE A LA COLUMNA. 
+
+CREATE TABLE favorite_food(
+	person_id SMALLINT UNSIGNED,
+    food VARCHAR(20),
+    CONSTRAINT pk_favorite_food PRIMARY KEY (person_id,food),
+    CONSTRAINT fk_fav_food_person_id FOREIGN KEY (person_id) 
+    REFERENCES person(person_id)
+);
+
+DESC favorite_food;
+
+USE sakila;
+
+## CAPITULO 2 DEL LIBRO
+
+## USO DE LA CLAUSULA GROUP Y HAVING
+## CLIENTES QUE HAN RENTADO MAS DE 40 VECES PELICULAS
+SELECT
+	c.first_name,
+    c.last_name, 
+    count(*) as quantity
+FROM customer c
+INNER JOIN 	rental r
+ON c.customer_id = r.customer_id
+GROUP BY
+	c.first_name, c.last_name
+HAVING count(*)>= 40 
+
+## USO DE LA CLAUSULA ORDER BY
+## CLIENTES QUE HAN RENTADO MAS DE 40 VECES PELICULAS
+
+SELECT
+	c.first_name,
+    c.last_name, 
+    time(r.rental_date) as rental_time
+FROM customer c
+INNER JOIN 	rental r
+ON c.customer_id = r.customer_id
+WHERE
+	date(r.rental_date) = '2005-06-14'
+ORDER BY
+	#date(r.rental_date) ASC
+    c.last_name ASC, #ORDENADO POR EL APELLIDO DE LA PERSONA
+    c.first_name ASC
+
+
+	
+
+
+
